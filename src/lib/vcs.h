@@ -11,6 +11,12 @@ void vcs_type(const char *buf, size_t sz);
 
 void vcs_restore();
 
+void vcs_mouse_reset();
+
+void vcs_mouse_abs(int x, int y);
+
+void vcs_mouse_rel(int x, int y);
+
 void vcs_init();
 void vcs_destroy();
 

@@ -10,6 +10,8 @@ static bool vcs_quit = true;
 
 static int inp_fd;
 static bool is_shifted;
+static int mouse_x;
+static int mouse_y;
 
 #define delay usleep(500)
 
@@ -309,6 +311,33 @@ void vcs_restore()
   vcs_unshift();
 }
 
+void vcs_mouse_reset()
+{
+  vcs_emit(inp_fd, EV_REL, REL_X, -20000);
+  vcs_emit(inp_fd, EV_REL, REL_Y, -20000);
+  vcs_report();
+  mouse_x = 0;
+  mouse_y = 0;
+}
+
+void vcs_mouse_abs(int x, int y)
+{
+  vcs_emit(inp_fd, EV_REL, REL_X, x - mouse_x);
+  vcs_emit(inp_fd, EV_REL, REL_Y, y - mouse_y);
+  vcs_report();
+  mouse_x = x;
+  mouse_y = y;
+}
+
+void vcs_mouse_rel(int x, int y)
+{
+  vcs_emit(inp_fd, EV_REL, REL_X, x);
+  vcs_emit(inp_fd, EV_REL, REL_Y, y);
+  vcs_report();
+  mouse_x += x;
+  mouse_y += y;
+}
+
 void vcs_init()
 {
   struct uinput_setup usetup;
@@ -337,6 +366,9 @@ void vcs_init()
     }
   }
   // mouse
+  ioctl(inp_fd, UI_SET_EVBIT, EV_REL);
+  ioctl(inp_fd, UI_SET_RELBIT, REL_X);
+  ioctl(inp_fd, UI_SET_RELBIT, REL_Y);
 
   // attach driver information
   memset(&usetup, 0, sizeof(usetup));
