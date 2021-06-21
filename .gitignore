@@ -1,0 +1,7 @@
+# build directory
+build/
+# hidden files
+.*
+*~
+# except this file
+!.gitignore
